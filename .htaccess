@@ -1,0 +1,44 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    # RewriteRule ^ %1 [L,R=301]
+
+    RewriteCond %{REQUEST_URI} !(\.css|\.js|\.png|\.jpg|\.svg|\.gif|robots\.txt|\.woff|\.woff2|\.otf|\.ttf|\.webp|\.map)$ [NC]
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(css|js|images|fonts|lib|themes|vendor|plugins|assets|livewire)/(.*)$ public/$1/$2 [L,NC]
+
+    # Deny access to all files and folders under .git/
+    RedirectMatch 403 /\\.git(/|$)
+</IfModule>
+<Files ~ "\.(env|json|config.js|md|gitignore|gitattributes|lock)$">
+    Order allow,deny
+    Deny from all
+</Files>
+<Files webpack.mix.js>
+        Order allow,deny
+        Deny from all
+</Files>
+<Files reademe.md>
+        Order allow,deny
+        Deny from all
+</Files>
+<Files artisan>
+        Order allow,deny
+        Deny from all
+</Files>
