@@ -12,14 +12,16 @@ class ProxyController extends Controller
     // get guardian api
     public function fetchData()
     {
-        if(Cache::has('guardian_api_response')) {
-            $responseData = Cache::get('guardian_api_response');
+        $q = request('q');
+        $cacheKey = 'guardian_api_response_' . md5($q);
+        if(Cache::has($cacheKey)) {
+            $responseData = Cache::get($cacheKey);
         } else {
             // make a request from guardian api
             $response = Http::get('https://content.guardianapis.com/search',
                                     [
                                         'api-key' => 'd3b61017-5556-449d-8e69-0f854f63429d',
-                                        'q' => request('q')
+                                        'q' => $q
                                     ]);
 
             $responseData = NULL;
@@ -27,7 +29,7 @@ class ProxyController extends Controller
                 $responseData = $response->json()['response']['results'];
 
                 // cache the api for 60 minutes
-                Cache::put('guardian_api_response', $responseData, 60);
+                Cache::put($cacheKey, $responseData, 60);
             }
         }
 

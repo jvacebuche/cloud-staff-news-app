@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use Livewire\Component;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 
 class Search extends Component
@@ -15,6 +16,7 @@ class Search extends Component
     {
         $response = Http::get(route('news'), ['q' => $this->searchTerm]);
         $articles = collect($response->json());
+        $this->articles = [];
         $this->articles = $this->filterResults($articles);
     }
 
@@ -56,13 +58,11 @@ class Search extends Component
 
     private function filterResults($data)
     {
-        $targetIds = $this->pinnedArticles;
+        $targetIds = collect($this->pinnedArticles);
 
         return $data->reject(function ($item) use ($targetIds) {
-            return in_array($item['id'], array_column($targetIds, 'id'));
+            return $targetIds->contains('id', $item['id']);
         });
-
-        return $data;
     }
 
 
