@@ -35,7 +35,7 @@
                         </td>
                         <td>{{ $pinned['webTitle'] }}</td>
                         <td><a href="{{ $pinned['webUrl'] }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Click here</a></td>
-                        <td>{{ \Carbon\Carbon::parse($pinned['webPublicationDate'])->format('F j, Y, g:i a') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($pinned['webPublicationDate'])->format('d/m/Y') }}</td>
                     </tr>
                     @empty
                         <tr>
@@ -74,7 +74,7 @@
                         </td>
                         <td>{{ $article['webTitle'] }}</td>
                         <td><a href="{{ $article['webUrl'] }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Click here</a></td>
-                        <td>{{ \Carbon\Carbon::parse($article['webPublicationDate'])->format('F j, Y, g:i a') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($article['webPublicationDate'])->format('d/m/Y') }}</td>
                     </tr>
                     @empty
                         <tr>
