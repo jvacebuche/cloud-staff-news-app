@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 class Search extends Component
 {
@@ -18,6 +19,11 @@ class Search extends Component
         $articles = collect($response->json());
         $this->articles = [];
         $this->articles = $this->filterResults($articles);
+    }
+
+    public function mount()
+    {
+        $this->pinnedArticles = Cache::get('pinned_articles') ?? [];
     }
 
     public function render()
@@ -35,6 +41,9 @@ class Search extends Component
             $this->pinnedArticles[] = $article;
         }
 
+        // cache pinned articles for 60 mins
+        Cache::put('pinned_articles', $this->pinnedArticles, 60);
+
         $this->articles = $this->filterById($result, $articleId);
     }
 
@@ -48,14 +57,19 @@ class Search extends Component
         }
 
         $this->pinnedArticles = $this->filterById($result, $articleId);
+
+        // update cache of pinned articles
+        Cache::put('pinned_articles', $this->pinnedArticles, 60);
     }
 
+    // remove specific article by id
     private function filterById($data, $articleId) {
         return $data->reject(function ($item) use ($articleId) {
             return $item['id'] === $articleId;
         });
     }
 
+    // for filtering search results if it's already existing in pinned articles
     private function filterResults($data)
     {
         $targetIds = collect($this->pinnedArticles);
